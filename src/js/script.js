@@ -1,146 +1,179 @@
 // -------------------------------
-// Seleciona os elementos principais da interface
+// Seleção dos elementos principais
 // -------------------------------
-
-// Pega a <ul> onde as tarefas serão exibidas
 const lista = document.getElementById("ul__movie");
-
-// Pega o botão "Adicionar"
 const botaoAdd = document.querySelector(".card__movie_btn_add");
-
-// Pega o campo de texto onde o usuário digita a tarefa
 const input = document.getElementById("inputMovie");
-
-
+const selectCategory = document.getElementById("selectCategory");
+const selectFilter = document.getElementById("selectFilter");
 
 // -------------------------------
-// LocalStorage - Função para salvar os dados
+// Função para salvar no LocalStorage
 // -------------------------------
 function salvarNoLocalStorage() {
-  const itens = []; // array que vai armazenar todas as tarefas
+  const itens = [];
 
-  // Pega todos os <li> existentes e salva cada um no array "itens"
   document.querySelectorAll("#ul__movie li").forEach(li => {
     itens.push({
-      texto: li.childNodes[0].textContent,   // texto da tarefa (primeiro nó do <li>)
-      categoria: li.classList.contains("serie") ? "serie" : "filme", // categoria (filme ou série)
-      assistido: li.classList.contains("checked") // se a tarefa está marcada como concluída
+      texto: li.querySelector("span").textContent,
+      categoria: li.classList.contains("serie") ? "serie" : "filme",
+      status: li.dataset.status,
+      avaliacao: Number(li.dataset.rating) || 0
     });
   });
 
-  // Salva o array como texto dentro do localStorage
   localStorage.setItem("movies", JSON.stringify(itens));
 }
 
-
-
 // -------------------------------
-// Função que cria um novo item <li> com o texto digitado
+// Função para aplicar filtro
 // -------------------------------
-function criarItem(texto, categoria = "filme", assistido = false) {
-
-  // Cria o elemento <li> que representa a tarefa
-  const li = document.createElement("li");
-
-  // Coloca o texto da tarefa dentro do <li>
-  li.textContent = texto;
-  li.classList.add(categoria); // adiciona a classe "filme" ou "serie"
-
-  // Se o item estava marcado como concluído no localStorage, aplicamos a classe "checked"
-  if (assistido) {
-    li.classList.add("checked");
-  }
-
-  // Cria o botão "Deletar" para excluir a tarefa
-  const btn = document.createElement("span");
-  btn.textContent = "Deletar";   // texto dentro do botão
-  btn.className = "close";       // classe usada no CSS para estilização
-
-  // Coloca o botão dentro do <li>
-  li.appendChild(btn);
-
-  // Retorna o <li> pronto para ser colocado na tela
-  return li;
-}
-
-
-
-// -------------------------------
-// LocalStorage - Carregar dados salvos ao iniciar
-// -------------------------------
-function carregarFilmes() {
-
-  // Tenta recuperar os dados salvos
-  const filmesSalvos = JSON.parse(localStorage.getItem("movies"));
-
-  // Se não tem nada salvo, simplesmente não faz nada
-  if (!filmesSalvos) return;
-
-  // Para cada filme salvo, reconstruímos a interface usando criarItem()
-  filmesSalvos.forEach(item => {
-    lista.appendChild(criarItem(item.texto, item.categoria, item.assistido));
+function aplicarFiltro() {
+  const filtro = selectFilter.value;
+  document.querySelectorAll("#ul__movie li").forEach(li => {
+    li.style.display = (filtro === "todos" || li.dataset.status === filtro) ? "flex" : "none";
   });
 }
 
-// Executa o carregamento das tarefas ao abrir o app
-carregarFilmes();
-
-
+selectFilter.addEventListener("change", aplicarFiltro);
 
 // -------------------------------
-// Evento: clicar no botão "Adicionar"
+// Função para criar avaliação (estrelas)
 // -------------------------------
-const selectCategory = document.getElementById("selectCategory");
-botaoAdd.addEventListener("click", () => {
+function criarAvaliacao(valor = 0) {
+  const rating = document.createElement('div');
+  rating.className = 'rating';
 
-  // Pega o texto digitado e remove espaços extras
-  const texto = input.value.trim();
+  for (let i = 1; i <= 5; i++) {
+    const star = document.createElement('span');
+    star.className = 'star';
+    star.textContent = '⭐';
+    star.dataset.value = i;
 
-  // Validação: se o usuário não digitou nada
-  if (!texto) {
-    alert("Digite um filme ou série!");
-    return; // interrompe a função
+    if (i <= valor) star.classList.add('active');
+
+    rating.appendChild(star);
   }
 
-  // Cria o <li> com a nova tarefa e adiciona na lista
-  const categoria = selectCategory.value; // pega 'movie' ou 'series'
-  lista.appendChild(criarItem(texto, categoria));
-  // Salva a lista atualizada no localStorage
-  salvarNoLocalStorage();
+  return rating;
+}
 
-  // Limpa o campo de texto depois de adicionar a tarefa
+// -------------------------------
+// Função para criar item <li>
+// -------------------------------
+function criarItem(texto, categoria = "filme", status = "pendente", avaliacao = 0) {
+  const li = document.createElement("li");
+  li.classList.add(categoria, status);
+  li.dataset.status = status;
+  li.dataset.rating = avaliacao;
+  li.style.position = 'relative';
+
+  const spanTexto = document.createElement("span");
+  spanTexto.textContent = texto;
+  li.appendChild(spanTexto);
+
+  if (status === "finalizado") {
+    li.appendChild(criarAvaliacao(avaliacao));
+  }
+
+  const btn = document.createElement("span");
+  btn.textContent = "Deletar";
+  btn.className = "close";
+  li.appendChild(btn);
+
+  return li;
+}
+
+// -------------------------------
+// Carregar itens salvos
+// -------------------------------
+function carregarFilmes() {
+  const filmesSalvos = JSON.parse(localStorage.getItem("movies"));
+  if (!filmesSalvos) return;
+
+  filmesSalvos.forEach(item => {
+    lista.appendChild(criarItem(item.texto, item.categoria, item.status, item.avaliacao));
+  });
+}
+
+carregarFilmes();
+
+// -------------------------------
+// Função para obter próximo status
+// -------------------------------
+function proximoStatus(atual) {
+  if (atual === 'pendente') return 'assistindo';
+  if (atual === 'assistindo') return 'finalizado';
+  return 'pendente';
+}
+
+// -------------------------------
+// Evento: adicionar novo item
+// -------------------------------
+botaoAdd.addEventListener("click", () => {
+  const texto = input.value.trim();
+  if (!texto) {
+    alert("Digite um filme ou série!");
+    return;
+  }
+
+  const categoria = selectCategory.value;
+  lista.appendChild(criarItem(texto, categoria));
+  salvarNoLocalStorage();
+  aplicarFiltro();
+
   input.value = "";
 });
 
-
-
 // -------------------------------
-// Delegação de eventos na lista inteira
-// (para marcar tarefa como feita ou deletar)
+// Delegação de eventos na lista
 // -------------------------------
 lista.addEventListener("click", (e) => {
+  const li = e.target.closest("li");
+  if (!li) return;
 
-  // -----------------------------------------------------
-  // 1️⃣ Se o clique foi no texto da tarefa (<li>)
-  // -----------------------------------------------------
-  if (e.target.tagName === "LI") {
+  // ⭐ Clique na estrela
+  if (e.target.classList.contains("star")) {
+    e.stopPropagation(); // evita mudar status
+    const valor = Number(e.target.dataset.value);
+    li.dataset.rating = valor;
 
-    // Alterna a classe "checked" (marca/desmarca como concluída)
-    e.target.classList.toggle("checked");
+    li.querySelectorAll(".star").forEach(star => {
+      star.classList.toggle("active", Number(star.dataset.value) <= valor);
+    });
 
-    // Salva o novo estado no localStorage
     salvarNoLocalStorage();
+    return;
   }
 
-  // -----------------------------------------------------
-  // 2️⃣ Se o clique foi no botão "Deletar"
-  // -----------------------------------------------------
+  // 🗑️ Clique no botão deletar
   if (e.target.classList.contains("close")) {
-    const li = e.target.parentElement;
     li.classList.add("removing");
     setTimeout(() => {
       li.remove();
       salvarNoLocalStorage();
     }, 200);
+    return;
   }
+
+  // ✅ Clique no li → mudar status
+  const atual = li.dataset.status;
+  const novo = proximoStatus(atual);
+
+  li.classList.remove(atual);
+  li.classList.add(novo);
+  li.dataset.status = novo;
+
+  const ratingExistente = li.querySelector(".rating");
+
+  if (novo === "finalizado" && !ratingExistente) {
+    li.appendChild(criarAvaliacao(Number(li.dataset.rating)));
+  }
+
+  if (novo !== "finalizado" && ratingExistente) {
+    ratingExistente.remove();
+  }
+
+  salvarNoLocalStorage();
+  aplicarFiltro();
 });

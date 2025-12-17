@@ -16,6 +16,28 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 16px;
 }
+/* ================= AVALIAÇÃO ================= */
+.rating {
+    
+    position: absolute;
+    right: 140px;
+    display: flex;
+    gap: 4px;
+    cursor: pointer;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+.star {
+    font-size: 16px;
+    color: #555;
+}
+
+.star.active {
+    color: #ffc107;
+}
+
 
 /* ================= CARD PRINCIPAL ================= */
 #card__movie {
@@ -58,7 +80,7 @@ h2 {
 }
 
 #card__movie_input select {
-    width: 120px;
+    width: 140px;
     padding: 14px;
     border-radius: 18px;
     border: none;
@@ -101,7 +123,7 @@ h2 {
 #ul__movie li {
     display: flex;
     align-items: center;
-    padding: 14px 60px 14px 50px;
+    padding: 14px 140px 14px 50px;
     margin-bottom: 12px;
     background-color: #1e1e1e;
     border-radius: 18px;
@@ -135,24 +157,24 @@ h2 {
 }
 
 /* Diferenciação visual por categoria */
-#ul__movie li.movie {
+/* #ul__movie li.movie {
     border-left: 4px solid #e50914;
 }
 
 #ul__movie li.series {
     border-left: 4px solid #4dd0e1;
-}
+} */
 
 /* ================= ITEM MARCADO - ASSISTIDO ================= */
-#ul__movie li.checked {
+/* #ul__movie li.checked {
     background-color: #383838;
     color: #fff;
     font-weight: bold;
     text-decoration: none; 
-}
+} */
 
 /* Tag "Assistido" à esquerda */
-#ul__movie li.checked::after {
+/* #ul__movie li.checked::after {
     content: "✅";
     position: absolute;
     left: 16px;
@@ -162,10 +184,10 @@ h2 {
     color: #4caf50;
     font-weight: bold;
     flex: auto;
-}
+} */
 
 /* Ícones mudam quando assistido */
-#ul__movie li.checked.movie::before {
+/* #ul__movie li.checked.movie::before {
     content: "🎬";
     border-left: 4px solid #4caf50;
 }
@@ -173,7 +195,24 @@ h2 {
 #ul__movie li.checked.series::before {
     content: "📺";
     border-left: 4px solid #4caf50;
-} 
+}  */
+#ul__movie li.pendente::after {
+    content: "🕓";
+    position: absolute;
+    left: 16px;
+}
+
+#ul__movie li.assistindo::after {
+    content: "▶️";
+    position: absolute;
+    left: 16px;
+}
+
+#ul__movie li.finalizado::after {
+    content: "✅";
+    position: absolute;
+    left: 16px;
+}
 
 /* ================= BOTÃO DELETAR ================= */
 .close {
