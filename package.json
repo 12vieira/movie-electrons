@@ -1,0 +1,36 @@
+{
+  "name": "app-electron-lista-de-tarefas",
+  "version": "1.0.0",
+  "description": "Aplicativo de lista de tarefas feito com Electron",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron ./src/main.js",
+    "build": "electron-builder"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^31.4.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.electron.todolist",
+    "productName": "Lista de Tarefas",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "src/assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}

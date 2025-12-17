@@ -1,0 +1,213 @@
+/* ================= RESET ================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ================= BODY ================= */
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    background-color: #121212;
+    color: #eaeaea;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+}
+
+/* ================= CARD PRINCIPAL ================= */
+#card__movie {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 700px;
+    margin: 30px 0 50px 0;
+    text-align: center;
+}
+
+/* ================= TÍTULO ================= */
+h2 {
+    margin-bottom: 18px;
+    letter-spacing: 1px;
+}
+
+/* ================= INPUT + SELECT + BOTÃO ================= */
+#card__movie_input {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+}
+
+#card__movie_input input {
+    flex: 1;
+    padding: 14px 18px;
+    border: none;
+    border-radius: 18px;
+    border-top-left-radius: 18px;
+    border-bottom-left-radius: 18px;
+    background-color: #1f1f1f;
+    color: #fff;
+    font-size: 16px;
+    outline: none;
+}
+
+#card__movie_input input::placeholder {
+    color: #aaa;
+}
+
+#card__movie_input select {
+    width: 120px;
+    padding: 14px;
+    border-radius: 18px;
+    border: none;
+    background-color: #1f1f1f;
+    color: #fff;
+    font-size: 16px;
+}
+
+.card__movie_btn_add {
+    width: 120px;
+    background-color: #e50914;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.25s, transform 0.1s;
+    border-top-right-radius: 18px;
+    border-bottom-right-radius: 18px;
+}
+
+.card__movie_btn_add:hover {
+    background-color: #ff1e27;
+}
+
+.card__movie_btn_add:active {
+    transform: scale(0.97);
+}
+
+/* ================= LISTA ================= */
+#ul__movie {
+    width: 700px;
+    margin-top: 25px;
+    list-style: none;
+}
+
+/* ================= ITEM ================= */
+#ul__movie li {
+    display: flex;
+    align-items: center;
+    padding: 14px 60px 14px 50px;
+    margin-bottom: 12px;
+    background-color: #1e1e1e;
+    border-radius: 18px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+    font-size: 16px;
+    position: relative;
+}
+
+#ul__movie li:hover {
+    background-color: #2a2a2a;
+    transform: translateY(-2px);
+}
+
+/* ================= ÍCONES DE CATEGORIA ================= */
+#ul__movie li.movie::before,
+#ul__movie li.series::before {
+    content: "";
+    display: inline-block;
+    width: 24px;              
+    margin-right: 10px;        
+    font-size: 20px;
+}
+
+#ul__movie li.movie::before {
+    content: "🎬"; /* filme não visto */
+}
+
+#ul__movie li.series::before {
+    content: "📺"; /* série não vista */
+}
+
+/* Diferenciação visual por categoria */
+#ul__movie li.movie {
+    border-left: 4px solid #e50914;
+}
+
+#ul__movie li.series {
+    border-left: 4px solid #4dd0e1;
+}
+
+/* ================= ITEM MARCADO - ASSISTIDO ================= */
+#ul__movie li.checked {
+    background-color: #383838;
+    color: #fff;
+    font-weight: bold;
+    text-decoration: none; 
+}
+
+/* Tag "Assistido" à esquerda */
+#ul__movie li.checked::after {
+    content: "✅";
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: #4caf50;
+    font-weight: bold;
+    flex: auto;
+}
+
+/* Ícones mudam quando assistido */
+#ul__movie li.checked.movie::before {
+    content: "🎬";
+    border-left: 4px solid #4caf50;
+}
+
+#ul__movie li.checked.series::before {
+    content: "📺";
+    border-left: 4px solid #4caf50;
+} 
+
+/* ================= BOTÃO DELETAR ================= */
+.close {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0 14px;
+    height: 36px;
+    background-color: #2b2b2b;
+    color: #fff;
+    font-weight: bold;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.close:hover {
+    background-color: #e50914;
+}
+
+/* ================= ANIMAÇÕES ================= */
+/* Adicionar item */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Deletar item */
+#ul__movie li.removing {
+    opacity: 0;
+    transform: translateX(30px);
+    transition: 0.2s;
+}
